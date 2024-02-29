@@ -320,7 +320,67 @@ public class RetryResource {
         }
     }
 }
+.....................................................................................
+			   Circut Breaker 
+....................................................................................
 
+What is cb?
+ cb  is usefull for limiting number of failures happening in the system.
+When part of the system becomes temporarily unstable.The Cb records successful and failed invocations of a method.
+When the ratio of failed invoication reaches the specified threshold , the cb opens and blocks the furture invocations of that method for a given time.
 
- 
+State of CB?
+
+ There are three states of CB.
+
+1.Open
+2.Closed
+3.Half Open
+
+IF CB in Closed State,System is stable, working fine
+IF CB in Open State, System is unstable, not working fine
+IF CB in Half State, Still System is unstable but try to recover from failures
+
+ package com.ibm.fault.cb;
+
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
+import org.eclipse.microprofile.faulttolerance.Fallback;
+
+import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
+
+@Path("cb")
+public class CircuitBreakerResource {
+
+    private AtomicLong counter = new AtomicLong();
+
+    @GET
+    @CircuitBreaker(requestVolumeThreshold = 4)
+    @Fallback(fallbackMethod = "fallback")
+    public List<String> getProducts() {
+        maybeFail();
+        return List.of("Product1", "Product2", "Product");
+    }
+
+    public List<String> fallback() {
+        return List.of("Fallback Responses");
+    }
+
+    private void maybeFail() {
+        final Long invocationCounter = counter.getAndIncrement();
+        if (invocationCounter % 4 > 1) {
+            System.out.println(invocationCounter);
+            throw new RuntimeException("Service Got failed");
+        }
+    }
+
+}
+
+Testing:
+http://localhost:8080/cb
+  Keep on hitting...
+see the response, whether we get fallback response or service response.
+
  

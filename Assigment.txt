@@ -1,0 +1,23 @@
+Assigment:
+ Build Book Rest API 
+
+1.Add new book.
+2.Return all books
+3.Return book by ISBN no
+4.filter books by category.
+5.update book by ISBN No
+6.remove book by ISBN No
+
+You have build microservices:
+
+BookService must be rest api 
+You must use Database Operations Using Reactive Panche either ActiveRecord or DAO
+You must enable Distributed Logging
+You must use Caching
+YOu must use Service Communication via SmallRye RestClient spec
+You must enable service Registry and Discovery
+You must handle relisence patterns - Timeout,Retry,CB
+....................................................................................
+
+
+
